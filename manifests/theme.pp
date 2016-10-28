@@ -4,6 +4,7 @@ define wp::theme (
   $manage_install = false,
   $install_name = '/tmp/theme.zip', # theme|zip|url 
   $theme_name = 'theme',
+  $user = $::wp::user
 ) {
   #$name = $title,
   include wp::cli
@@ -12,7 +13,7 @@ define wp::theme (
     exec {"${location} wp theme install ${theme_name}":
       command => "/usr/bin/wp theme install ${install_name}",
       cwd     => $location,
-      user    => $::wp::user,
+      user    => $user,
       require => [ Class['wp::cli'] ],
       unless  => "/usr/bin/wp theme is-installed ${theme_name}"
     }
@@ -32,6 +33,7 @@ define wp::theme (
   }
   wp::command { "$location theme $command":
     location => $location,
-    command => "theme $command"
+    command  => "theme $command",
+    user     => $user
   }
 }

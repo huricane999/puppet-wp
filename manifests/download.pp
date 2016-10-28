@@ -4,6 +4,7 @@ define wp::download (
   $locale   = 'en_US',
   $version  = '4.1',
   $force    = false,
+  $user     = $::wp::user
 ) {
   include wp::cli
 
@@ -16,7 +17,7 @@ define wp::download (
     
 	  exec {"wp download $location":
 	    command => "/usr/bin/wp core $download",
-	    user => $::wp::user,
+	    user => $user,
 	    require => [ Class['wp::cli'] ],
 	    path   => "/bin:/usr/bin:/usr/sbin",
 	    unless => "ls $location | grep index.php > /dev/null 2>&1", 

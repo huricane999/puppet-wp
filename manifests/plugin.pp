@@ -2,7 +2,8 @@ define wp::plugin (
 	$slug = $title,
 	$location,
 	$ensure = enabled,
-	$networkwide = false
+	$networkwide = false,
+  $user = $::wp::user
 ) {
 	include wp::cli
 
@@ -12,7 +13,7 @@ define wp::plugin (
 
 			exec { "wp install plugin $title":
 				cwd     => $location,
-				user    => $::wp::user,				
+				user    => $user,				
 				command => "/usr/bin/wp plugin install $slug",
 				unless  => "/usr/bin/wp plugin is-installed $slug",
 				before  => Wp::Command["$location plugin $slug $ensure"],
@@ -39,6 +40,7 @@ define wp::plugin (
 	}
 	wp::command { "$location plugin $slug $ensure":
 		location => $location,
-		command => $args
+		command  => $args,
+    user     => $user
 	}
 }

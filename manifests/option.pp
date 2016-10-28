@@ -2,7 +2,8 @@ define wp::option (
 	$location,
 	$key = $title,
 	$value = undef,
-	$ensure = present
+	$ensure = present,
+  $user = $::wp::user
 ) {
 	case $ensure {
 		present: {
@@ -24,6 +25,7 @@ define wp::option (
 
 	wp::command { "$location option $command":
 		location => $location,
-		command => "option $command"
+		command  => "option $command",
+    user     => $user
 	}
 }

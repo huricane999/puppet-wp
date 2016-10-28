@@ -6,6 +6,7 @@ define wp::config (
   $dbhost    = 'localhost',
   $dbprefix  = 'wp_',
   $dbcharset = 'utf8',
+  $user      = $::wp::user
 ) {
   include wp::cli
 
@@ -13,7 +14,7 @@ define wp::config (
   
   exec {"wp config $location":
     command => "/usr/bin/wp core $config",
-    user => $::wp::user,
+    user => $user,
     require => [ Class['wp::cli'] ],
     path   => "/bin:/usr/bin:/usr/sbin",
     unless => "ls $location/wp-config.php | grep wp-config.php > /dev/null 2>&1", 
