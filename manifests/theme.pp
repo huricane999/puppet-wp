@@ -21,19 +21,19 @@ define wp::theme (
 
   case $ensure {
     enabled: {
-      $command = "activate $theme_name"
+      $command = "activate ${theme_name}"
     }
     installed: {
       # this is just something to do if we don't want to activate theme
-      $command = "is-installed $theme_name"
+      $command = "is-installed ${theme_name}"
     }
     default: {
-      fail("Invalid ensure for wp::theme")
+      fail('Invalid ensure for wp::theme')
     }
   }
-  wp::command { "$location theme $command":
+  wp::command { "${location} theme ${command}":
     location => $location,
-    command  => "theme $command",
+    command  => "theme ${command}",
     user     => $user
   }
 }

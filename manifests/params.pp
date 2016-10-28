@@ -1,3 +1,3 @@
 class wp::params {
-	$user = 'www-data'
+  $user = 'www-data'
 }

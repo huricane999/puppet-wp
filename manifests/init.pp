@@ -1,5 +1,5 @@
 class wp (
-	$user = $::wp::params::user,
+  $user = $::wp::params::user,
 ) inherits wp::params {
-	# ...
+  # ...
 }

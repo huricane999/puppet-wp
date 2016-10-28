@@ -1,42 +1,42 @@
 define wp::site (
-	$location = $title,
-	$url            = 'www.example.com',
-	$siteurl        = undef,
-	$sitename       = 'WordPress Site',
-	$admin_user     = 'admin',
-	$admin_email    = 'admin@example.com',
-	$admin_password = 'password',
-	$network        = false,
-	$subdomains     = false,
+  $location = $title,
+  $url            = 'www.example.com',
+  $siteurl        = undef,
+  $sitename       = 'WordPress Site',
+  $admin_user     = 'admin',
+  $admin_email    = 'admin@example.com',
+  $admin_password = 'password',
+  $network        = false,
+  $subdomains     = false,
   $user           = $::wp::user
 ) {
-	include wp::cli
+  include wp::cli
 
-	if ( $network == true ) and ( $subdomains == true ) {
-		$install = "multisite-install --subdomains --url='$url'"
-	}
-	elsif ( $network == true ) {
-		$install = "multisite-install --url='$url'"
-	}
-	else {
-		$install = "install --url='$url'"
-	}
+  if ( $network == true ) and ( $subdomains == true ) {
+    $install = "multisite-install --subdomains --url='${url}'"
+  }
+  elsif ( $network == true ) {
+    $install = "multisite-install --url='${url}'"
+  }
+  else {
+    $install = "install --url='${url}'"
+  }
 
-	exec {"wp install $location":
-		command => "/usr/bin/wp core $install --title='$sitename' --admin_email='$admin_email' --admin_name='$admin_user' --admin_password='$admin_password'",
-		cwd => $location,
-		user => $user,
-		require => [ Class['wp::cli'] ],
-		unless => '/usr/bin/wp core is-installed'
-	}
+  exec {"wp install ${location}":
+    command => "/usr/bin/wp core ${install} --title='${sitename}' --admin_email='${admin_email}' --admin_name='${admin_user}' --admin_password='${admin_password}'",
+    cwd     => $location,
+    user    => $user,
+    require => [ Class['wp::cli'] ],
+    unless  => '/usr/bin/wp core is-installed'
+  }
 
-	if $siteurl != undef and $siteurl != $url {
-		wp::option {"wp siteurl $location":
-			location => $location,
-			ensure => "equal",
-			key => "siteurl",
-      user => $user,
-			value => $siteurl
-		}
-	}
+  if $siteurl != undef and $siteurl != $url {
+    wp::option {"wp siteurl ${location}":
+      location => $location,
+      ensure   => 'equal',
+      key      => 'siteurl',
+      user     => $user,
+      value    => $siteurl
+    }
+  }
 }
