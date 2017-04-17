@@ -17,6 +17,7 @@ class wp::cli (
     # Create the install path
     file { [ $install_path, "${install_path}/bin" ]:
       ensure => directory,
+      mode   => '0755',
     }
 
     # Clone the Git repo
@@ -29,7 +30,7 @@ class wp::cli (
     # Ensure we can run wp-cli
     file { "${install_path}/bin/wp":
       ensure  => 'present',
-      mode    => 'a+x',
+      mode    => '0755',
       require => Exec[ 'wp-cli download' ]
     }
 
