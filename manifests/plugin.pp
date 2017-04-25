@@ -1,5 +1,6 @@
 define wp::plugin (
   $slug = $title,
+  $source = $title,
   $location,
   $ensure = enabled,
   $networkwide = false,
@@ -40,7 +41,7 @@ define wp::plugin (
       exec { "wp install plugin $title$network$held":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install $slug --activate $held",
+        command => "/usr/bin/wp plugin install $source --activate $held",
         unless  => "/usr/bin/wp plugin is-installed $slug",
         require => Class["wp::cli"],
         onlyif  => "/usr/bin/wp core is-installed"
