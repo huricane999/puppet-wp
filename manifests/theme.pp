@@ -11,7 +11,7 @@ define wp::theme (
 
   if ($manage_install) {
     exec {"${location} wp theme install ${theme_name}":
-      command => "/usr/bin/wp theme install ${install_name}",
+      command => "/usr/bin/wp theme install \"${install_name}\"",
       cwd     => $location,
       user    => $user,
       require => [ Class['wp::cli'] ],
