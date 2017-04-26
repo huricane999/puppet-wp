@@ -11,6 +11,9 @@ define wp::plugin (
 
   if ( $networkwide ) {
     $network = ' --network'
+    $activate = '--activate-network'
+  } else {
+    $activate = '--activate'
   }
 
   if ( $version != 'latest' ) {
@@ -19,17 +22,17 @@ define wp::plugin (
 
   case $ensure {
     enabled: {
-      exec { "wp install plugin $title --activate$network$held":
+      exec { "wp install plugin \"$source\" $activate$held":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install $slug --activate $held",
+        command => "/usr/bin/wp plugin install \"$source\" $activate$held",
         unless  => "/usr/bin/wp plugin is-installed $slug",
         require => Class["wp::cli"],
         onlyif  => "/usr/bin/wp core is-installed"
       }
     }
     disabled: {
-      exec { "wp deactivate plugin $title$network$held":
+      exec { "wp deactivate plugin $slug$network$held":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin deactivate $slug",
@@ -38,17 +41,17 @@ define wp::plugin (
       }
     }
     installed: {
-      exec { "wp install plugin $title$network$held":
+      exec { "wp install plugin \"$source\"$network$held":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install $source --activate $held",
+        command => "/usr/bin/wp plugin install \"$source\" $network$held",
         unless  => "/usr/bin/wp plugin is-installed $slug",
         require => Class["wp::cli"],
         onlyif  => "/usr/bin/wp core is-installed"
       }
     }
     deleted: {
-      exec { "wp delete plugin $title":
+      exec { "wp delete plugin $slug":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin delete $slug",
@@ -57,7 +60,7 @@ define wp::plugin (
       }
     }
     uninstalled: {
-      exec { "wp uninstall plugin $title":
+      exec { "wp uninstall plugin $slug":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin uninstall $slug --deactivate",
