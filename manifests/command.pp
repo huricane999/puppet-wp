@@ -1,7 +1,9 @@
 define wp::command (
   $location,
   $command,
-  $user = $::wp::user
+  $user = $::wp::user,
+  $onlyif = '/usr/bin/wp core is-installed',
+  $unless = undef,
 ) {
   include wp::cli
 
@@ -10,6 +12,7 @@ define wp::command (
     cwd     => $location,
     user    => $user,
     require => [ Class['wp::cli'] ],
-    onlyif  => '/usr/bin/wp core is-installed'
+    onlyif  => $onlyif,
+    unless  => $unless,
   }
 }
