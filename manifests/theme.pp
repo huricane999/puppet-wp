@@ -4,7 +4,8 @@ define wp::theme (
   $manage_install = false,
   $install_name = '/tmp/theme.zip', # theme|zip|url 
   $theme_name = 'theme',
-  $user = $::wp::user
+  $user = $::wp::user,
+  $networkwide = false,
 ) {
   #$name = $title,
   include wp::cli
@@ -21,7 +22,11 @@ define wp::theme (
 
   case $ensure {
     enabled: {
-      $command = "activate ${theme_name}"
+      if $networkwide {
+        $command = "enable ${theme_name}"
+      } else {
+        $command = "activate ${theme_name}"
+      }
       $check = "/usr/bin/wp theme status ${theme_name} | grep -q Status:\\ Active"
     }
     installed: {
