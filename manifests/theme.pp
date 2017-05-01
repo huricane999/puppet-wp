@@ -24,7 +24,7 @@ define wp::theme (
     enabled: {
       if $networkwide {
         $command = "enable ${theme_name}"
-        $check = '/bin/bash -c "[`/usr/bin/wp theme list | grep digital-magazine-chass | awk \'{print \$5}\'` == \'site\']"'
+        $check = '/bin/bash -c "[ `/usr/bin/wp theme list | grep digital-magazine-chass | awk \'{print \$5}\'` == \'site\' ]"'
       } else {
         $command = "activate ${theme_name}"
         $check = "/usr/bin/wp theme status ${theme_name} | grep -q Status:\\ Active"
