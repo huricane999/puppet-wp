@@ -22,7 +22,7 @@ define wp::plugin (
 
   case $ensure {
     enabled: {
-      exec { "wp install plugin \"$source\" $activate$held":
+      exec { "${title}: wp install plugin \"$source\" $activate$held":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin install \"$source\" $activate$held",
@@ -32,7 +32,7 @@ define wp::plugin (
       }
     }
     disabled: {
-      exec { "wp deactivate plugin $slug$network$held":
+      exec { "${title}: wp deactivate plugin $slug$network$held":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin deactivate $slug",
@@ -41,7 +41,7 @@ define wp::plugin (
       }
     }
     installed: {
-      exec { "wp install plugin \"$source\"$network$held":
+      exec { "${title}: wp install plugin \"$source\"$network$held":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin install \"$source\" $network$held",
@@ -51,7 +51,7 @@ define wp::plugin (
       }
     }
     deleted: {
-      exec { "wp delete plugin $slug":
+      exec { "${title}: wp delete plugin $slug":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin delete $slug",
@@ -60,7 +60,7 @@ define wp::plugin (
       }
     }
     uninstalled: {
-      exec { "wp uninstall plugin $slug":
+      exec { "${title}: wp uninstall plugin $slug":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin uninstall $slug --deactivate",
