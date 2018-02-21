@@ -14,7 +14,7 @@ define wp::download (
     } else {
       $download = "download --path='${location}' --locale='${locale}' --version='${version}'"
     }
-    
+
     exec {"wp download ${location}":
       command => "/usr/bin/wp core ${download}",
       user    => $user,

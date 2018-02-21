@@ -32,8 +32,8 @@ define wp::site (
 
   if $siteurl != undef and $siteurl != $url {
     wp::option {"wp siteurl ${location}":
-      location => $location,
       ensure   => 'equal',
+      location => $location,
       key      => 'siteurl',
       user     => $user,
       value    => $siteurl

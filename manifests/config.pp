@@ -16,7 +16,7 @@ define wp::config (
   $user         = $::wp::user
 ) {
   include wp::cli
-  
+
   if $multisite {
     $multisitephp = template( 'wp/config_extraphp_multisite.erb' )
   } else {
@@ -30,12 +30,12 @@ define wp::config (
   } else {
     $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}'"
   }
-  
-  exec {"wp config $location":
-    command => "/usr/bin/wp core $config",
+
+  exec {"wp config ${location}":
+    command => "/usr/bin/wp core ${config}",
     user    => $user,
     require => [ Class['wp::cli'] ],
-    path    => "/bin:/usr/bin:/usr/sbin",
-    creates => "${location}/wp-config.php", 
+    path    => '/bin:/usr/bin:/usr/sbin',
+    creates => "${location}/wp-config.php",
   }
 }
