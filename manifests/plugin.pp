@@ -13,11 +13,14 @@ define wp::plugin (
     $network = ' --network'
     $activate = '--activate-network'
   } else {
+    $network = ''
     $activate = '--activate'
   }
 
   if ( $version != 'latest' ) {
     $held = " --version=${version}"
+  } else {
+    $held = ''
   }
 
   case $ensure {
