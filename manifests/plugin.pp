@@ -30,8 +30,11 @@ define wp::plugin (
         user    => $user,
         command => "/usr/bin/wp plugin install \"${source}\" ${activate_arg} ${held_arg}",
         unless  => "/usr/bin/wp plugin is-installed ${slug}",
-        require => Class['wp::cli'],
-        onlyif  => '/usr/bin/wp core is-installed'
+        require => [
+          Class['wp::cli'],
+          Exec["wp install plugin \"${source}\" ${held_arg}"],
+        ],
+        onlyif  => '/usr/bin/wp core is-installed',
       }
     }
     disabled: {
@@ -39,20 +42,14 @@ define wp::plugin (
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug}",
-        require => Class['wp::cli'],
+        require => [
+          Class['wp::cli'],
+          Exec["wp install plugin \"${source}\" ${held_arg}"],
+        ],
         onlyif  => '/usr/bin/wp core is-installed'
       }
     }
-    installed: {
-      exec { "wp install plugin \"${source}\" ${held_arg}":
-        cwd     => $location,
-        user    => $user,
-        command => "/usr/bin/wp plugin install \"${source}\" ${held_arg}",
-        unless  => "/usr/bin/wp plugin is-installed ${slug}",
-        require => Class['wp::cli'],
-        onlyif  => '/usr/bin/wp core is-installed'
-      }
-    }
+    installed: {}
     deleted: {
       exec { "wp delete plugin ${slug}":
         cwd     => $location,
@@ -73,6 +70,17 @@ define wp::plugin (
     }
     default: {
       fail( 'Invalid ensure argument passed into wp::plugin' )
+    }
+  }
+
+  if $ensure == 'installed' or $ensure == 'enabled' or $ensure == 'disabled' {
+    exec { "wp install plugin \"${source}\" ${held_arg}":
+      cwd     => $location,
+      user    => $user,
+      command => "/usr/bin/wp plugin install \"${source}\" ${held_arg}",
+      unless  => "/usr/bin/wp plugin is-installed ${slug}",
+      require => Class['wp::cli'],
+      onlyif  => '/usr/bin/wp core is-installed'
     }
   }
 }
