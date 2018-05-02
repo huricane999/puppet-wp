@@ -42,7 +42,7 @@ define wp::theme (
     location => $location,
     command  => "theme install ${install_name}",
     user     => $user,
-    unless   => "is-installed ${theme_name}",
+    unless   => "/usr/bin/wp is-installed ${theme_name}",
   }
 
   if $command {
