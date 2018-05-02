@@ -10,44 +10,44 @@ define wp::plugin (
   include wp::cli
 
   if ( $networkwide ) {
-    $network = ' --network'
-    $activate = '--activate-network'
+    $network_arg = ' --network'
+    $activate_arg = '--activate-network'
   } else {
-    $network = ''
-    $activate = '--activate'
+    $network_arg = ''
+    $activate_arg = '--activate'
   }
 
   if ( $version != 'latest' ) {
-    $held = " --version=${version}"
+    $held_arg = " --version=${version}"
   } else {
-    $held = ''
+    $held_arg = ''
   }
 
   case $ensure {
     enabled: {
-      exec { "wp install plugin \"${source}\" ${activate} ${held}":
+      exec { "wp install plugin \"${source}\" ${activate_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install \"${source}\" ${activate} ${held}",
+        command => "/usr/bin/wp plugin install \"${source}\" ${activate_arg} ${held_arg}",
         unless  => "/usr/bin/wp plugin is-installed ${slug}",
         require => Class['wp::cli'],
         onlyif  => '/usr/bin/wp core is-installed'
       }
     }
     disabled: {
-      exec { "wp deactivate plugin ${slug} ${network} ${held}":
+      exec { "wp deactivate plugin ${slug} ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin deactivate ${slug}",
+        command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug}",
         require => Class['wp::cli'],
         onlyif  => '/usr/bin/wp core is-installed'
       }
     }
     installed: {
-      exec { "wp install plugin \"${source}\" ${network} ${held}":
+      exec { "wp install plugin \"${source}\" ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install \"${source}\" ${network} ${held}",
+        command => "/usr/bin/wp plugin install \"${source}\" ${network_arg} ${held_arg}",
         unless  => "/usr/bin/wp plugin is-installed ${slug}",
         require => Class['wp::cli'],
         onlyif  => '/usr/bin/wp core is-installed'
