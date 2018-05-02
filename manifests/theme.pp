@@ -23,26 +23,35 @@ define wp::theme (
   case $ensure {
     enabled: {
       if $networkwide {
-        $command = "enable ${theme_name}"
+        $command = "enable ${theme_name} --network"
         $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'site' ]]\""
       } else {
-        $command = "activate ${theme_name}"
+        $command = "enable ${theme_name}"
         $check = "/usr/bin/wp theme status ${theme_name} | grep -q Status:\\ Active"
       }
     }
     installed: {
-      # this is just something to do if we don't want to activate theme
-      $command = "is-installed ${theme_name}"
-      $check = "/usr/bin/wp theme ${command}"
+      $command = false
     }
     default: {
       fail('Invalid ensure for wp::theme')
     }
   }
-  wp::command { "${location} theme ${command}":
+
+  wp::command { "${location} theme install ${install_name}":
     location => $location,
-    command  => "theme ${command}",
+    command  => "theme install ${install_name}",
     user     => $user,
-    unless   => $check,
+    unless   => "is-installed ${theme_name}",
+  }
+
+  if $command {
+    wp::command { "${location} theme ${command}":
+      location => $location,
+      command  => "theme ${command}",
+      user     => $user,
+      unless   => $check,
+      require  => Wp::Command["${location} theme install ${install_name}"],
+    }
   }
 }
