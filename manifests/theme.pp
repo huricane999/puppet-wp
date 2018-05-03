@@ -38,20 +38,12 @@ define wp::theme (
     }
   }
 
-  wp::command { "${location} theme install ${install_name}":
-    location => $location,
-    command  => "theme install ${install_name}",
-    user     => $user,
-    unless   => "/usr/bin/wp is-installed ${theme_name}",
-  }
-
   if $command {
     wp::command { "${location} theme ${command}":
       location => $location,
       command  => "theme ${command}",
       user     => $user,
       unless   => $check,
-      require  => Wp::Command["${location} theme install ${install_name}"],
     }
   }
 }
