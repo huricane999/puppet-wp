@@ -31,7 +31,7 @@ define wp::plugin (
       require => Class['wp::cli'],
       onlyif  => [
         '/usr/bin/wp core is-installed',
-        "/bin/bash -c \"[ ! $(wp plugin is-installed ${slug}) ]\"",
+        "/bin/bash -c \"/usr/bin/wp plugin is-installed ${slug} >& /dev/null; /bin/test ! $?\"",
       ],
     }
   }
@@ -70,7 +70,7 @@ define wp::plugin (
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
-          '/bin/bash -c "[ ! -d \"$(wp plugin path)\"]"',
+          "/bin/bash -c 'if [[ -d \"$(wp --allow-root plugin path)/acf-flexible-content\" ]]; then true; else false; fi'",
         ]
       }
     }
