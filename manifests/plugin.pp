@@ -25,10 +25,10 @@ define wp::plugin (
 
   case $ensure {
     enabled: {
-      exec { "wp install plugin \"${source}\" ${activate_arg} ${held_arg}":
+      exec { "wp install plugin \"${source}\" ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin install \"${source}\" ${activate_arg} ${held_arg}",
+        command => "/usr/bin/wp plugin activate ${slug} ${network_arg}",
         unless  => "/usr/bin/wp plugin status ${slug} | grep -q Status:\\ Active",
         require => [
           Class['wp::cli'],
