@@ -29,7 +29,7 @@ define wp::plugin (
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin install \"${source}\" ${activate_arg} ${held_arg}",
-        unless  => "/usr/bin/wp plugin is-installed ${slug}",
+        unless  => "/usr/bin/wp plugin status ${slug} | grep -q Status:\\ Active",
         require => [
           Class['wp::cli'],
           Exec["wp install plugin \"${source}\" ${held_arg}"],
@@ -42,6 +42,7 @@ define wp::plugin (
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug}",
+        unless  => "/usr/bin/wp plugin status ${slug} | grep -q Status:\\ Inactive",
         require => [
           Class['wp::cli'],
           Exec["wp install plugin \"${source}\" ${held_arg}"],
@@ -55,6 +56,7 @@ define wp::plugin (
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin delete ${slug}",
+        unless  => '/bin/bash -c "[ ! -d \"$(wp plugin path)\"]"',
         require => Class['wp::cli'],
         onlyif  => '/usr/bin/wp core is-installed'
       }
@@ -64,6 +66,7 @@ define wp::plugin (
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin uninstall ${slug} --deactivate",
+        unless  => "/bin/bash -c \"[ ! $(wp plugin is-installed ${slug}) ]\"",
         require => Class['wp::cli'],
         onlyif  => '/usr/bin/wp core is-installed'
       }
