@@ -10,14 +10,16 @@ define wp::theme (
   #$name = $title,
   include wp::cli
 
-  if ($manage_install) {
-    exec {"${location} wp theme install ${theme_name}":
+  if $manage_install {
+    exec { "${location} wp theme install ${theme_name}":
       command => "/usr/bin/wp theme install \"${install_name}\"",
       cwd     => $location,
       user    => $user,
       require => [ Class['wp::cli'] ],
       unless  => "/usr/bin/wp theme is-installed ${theme_name}"
     }
+
+
   }
 
   case $ensure {
@@ -44,6 +46,10 @@ define wp::theme (
       command  => "theme ${command}",
       user     => $user,
       unless   => $check,
+    }
+
+    if $manage_install {
+      Exec["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
   }
 }
