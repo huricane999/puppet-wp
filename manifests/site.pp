@@ -1,3 +1,4 @@
+# Manage a WordPress Site
 define wp::site (
   $location = $title,
   $url            = 'www.example.com',
@@ -23,7 +24,9 @@ define wp::site (
   }
 
   exec {"wp install ${location}":
+    # lint:ignore:140chars
     command => "/usr/bin/wp core ${install} --title='${sitename}' --admin_email='${admin_email}' --admin_name='${admin_user}' --admin_password='${admin_password}'",
+    # lint:endignore
     cwd     => $location,
     user    => $user,
     require => [ Class['wp::cli'] ],

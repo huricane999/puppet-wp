@@ -1,3 +1,4 @@
+# Define a htaccess Rewrite Rule
 define wp::rewrite (
   $location,
   $structure = $title,

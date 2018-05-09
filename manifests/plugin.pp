@@ -1,3 +1,4 @@
+# Manage a WordPress Plugin
 define wp::plugin (
   $location,
   $slug = $title,

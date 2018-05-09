@@ -1,3 +1,4 @@
+# Manage a WordPress Option
 define wp::option (
   $location,
   $key = $title,

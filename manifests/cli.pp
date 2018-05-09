@@ -1,3 +1,4 @@
+# Manage the WordPress CLI
 class wp::cli (
   $ensure = 'installed',
   $install_path = '/usr/local/src/wp-cli',

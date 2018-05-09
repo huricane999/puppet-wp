@@ -1,3 +1,4 @@
+# Download WordPress Core 
 define wp::download (
   $ensure = 'installed',
   $location = $title,

@@ -1,3 +1,4 @@
+# Manage a WordPress Config
 define wp::config (
   $location = $title,
   $dbname       = 'wordpress',
@@ -26,9 +27,13 @@ define wp::config (
   $extraphp_str = "${multisitephp}${extraphp}"
 
   if $extraphp_str != '' {
+    # lint:ignore:140chars
     $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php <<PHP\n${extraphp_str}\nPHP"
+    # lint:endignore
   } else {
+    # lint:ignore:140chars
     $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}'"
+    # lint:endignore
   }
 
   exec {"wp config ${location}":

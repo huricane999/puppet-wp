@@ -1,3 +1,4 @@
+# Execute a WordPress CLI Command
 define wp::command (
   $location,
   $command,
