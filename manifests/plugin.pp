@@ -25,7 +25,7 @@ define wp::plugin (
   }
 
   if $ensure == 'installed' or $ensure == 'enabled' or $ensure == 'disabled' {
-    exec { "wp install plugin \"${source}\" ${held_arg}":
+    exec { "${location} install plugin \"${source}\" ${held_arg}":
       cwd     => $location,
       user    => $user,
       command => "/usr/bin/wp plugin install \"${source}\" ${held_arg}",
@@ -39,7 +39,7 @@ define wp::plugin (
 
   case $ensure {
     enabled: {
-      exec { "wp install plugin \"${source}\" ${network_arg} ${held_arg}":
+      exec { "${location} install plugin \"${source}\" ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin activate ${slug} ${network_arg}",
@@ -51,7 +51,7 @@ define wp::plugin (
       }
     }
     disabled: {
-      exec { "wp deactivate plugin ${slug} ${network_arg} ${held_arg}":
+      exec { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug}",
@@ -64,7 +64,7 @@ define wp::plugin (
     }
     installed: {}
     deleted: {
-      exec { "wp delete plugin ${slug}":
+      exec { "${location} delete plugin ${slug}":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin delete ${slug}",
@@ -76,7 +76,7 @@ define wp::plugin (
       }
     }
     uninstalled: {
-      exec { "wp uninstall plugin ${slug}":
+      exec { "${location} uninstall plugin ${slug}":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin uninstall ${slug} --deactivate",
