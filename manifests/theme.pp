@@ -14,7 +14,7 @@ define wp::theme (
   if $manage_install {
     wp::command{ "${location} wp theme install ${theme_name}":
       location => $location,
-      command  => "/usr/bin/wp theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
+      command  => "theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
       user     => $user,
       unless   => "/usr/bin/wp theme is-installed ${theme_name}"
     }
