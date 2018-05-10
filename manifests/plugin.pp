@@ -32,6 +32,7 @@ define wp::plugin (
     $held_arg = ''
   }
 
+  # lint:ignore:140chars
   if $ensure == 'installed' or $ensure == 'enabled' or $ensure == 'disabled' {
     exec { "${location} install plugin \"${source}\" ${held_arg}":
       cwd     => $location,
@@ -99,4 +100,5 @@ define wp::plugin (
       fail( 'Invalid ensure argument passed into wp::plugin' )
     }
   }
+  # lint:endignore
 }
