@@ -56,7 +56,7 @@ define wp::theme (
     }
 
     if $manage_install {
-      Exec["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
+      Wp::Command["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
   }
 }
