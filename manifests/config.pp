@@ -43,4 +43,12 @@ define wp::config (
     path    => '/bin:/usr/bin:/usr/sbin',
     creates => "${location}/wp-config.php",
   }
+  
+  exec { "${location} wp config set dbname":
+    command => "/usr/bin/wp config set --path='${location}' dbname '${dbname}'",
+    user    => $user,
+    require => [ Class['wp::cli'] ],
+    path    => '/bin:/usr/bin:/usr/sbin',
+    unless  => "/bin/test \"`/usr/bin/wp config get --path='${location}' dbname`\" == '${dbname}'",
+  }
 }
