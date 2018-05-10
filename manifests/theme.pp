@@ -42,6 +42,18 @@ define wp::theme (
     uninstalled: {
       $command = "delete ${theme_name}"
       $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'no' ]]\""
+
+      if $networkwide {
+        # lint:ignore:140chars
+        exec { "${location} network disable theme ${theme_name}":
+          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
+          cwd     => $location,
+          user    => $user,
+          unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp --allow-root theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | grep Status | grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp --allow-root site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
+          require => [ Class['wp::cli'] ],
+        }
+        # lint:endignore
+      }
     }
     installed: {
       $command = false
