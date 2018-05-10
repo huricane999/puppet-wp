@@ -19,9 +19,11 @@ define wp::plugin (
       $network_arg = ' --network'
       $activate_arg = '--activate-network'
     }
+    $status_str = 'Network Active'
   } else {
     $network_arg = ''
     $activate_arg = '--activate'
+    $status_str = 'Active'
   }
 
   if ( $version != 'latest' ) {
@@ -52,7 +54,7 @@ define wp::plugin (
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
-          "/usr/bin/wp plugin status ${slug} | grep -q Status:\\ Inactive",
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
         ],
       }
     }
@@ -64,7 +66,7 @@ define wp::plugin (
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
-          "/usr/bin/wp plugin status ${slug} | grep -q Status:\\ Active",
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
         ],
       }
     }
