@@ -5,14 +5,20 @@ define wp::plugin (
   $source = $title,
   $ensure = enabled,
   $networkwide = false,
+  $networkuser = undef,
   $version = 'latest',
   $user = $::wp::user,
 ) {
   include wp::cli
 
-  if ( $networkwide ) {
-    $network_arg = ' --network'
-    $activate_arg = '--activate-network'
+  if $networkwide {
+    if $networkuser {
+      $network_arg = "--user=${networkuser} --network"
+      $activate_arg = "--user=${networkuser} --activate-network"
+    } else {
+      $network_arg = ' --network'
+      $activate_arg = '--activate-network'
+    }
   } else {
     $network_arg = ''
     $activate_arg = '--activate'
