@@ -39,8 +39,8 @@ define wp::plugin (
       command => "/usr/bin/wp plugin install \"${source}\" ${held_arg} --skip-plugins --skip-themes --skip-packages",
       require => Class['wp::cli'],
       onlyif  => [
-        '/usr/bin/wp core is-installed',
-        "/bin/bash -c '/usr/bin/wp plugin is-installed ${slug} >& /dev/null; /bin/test 1 == $?'",
+        '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
+        "/bin/bash -c '/usr/bin/wp plugin is-installed ${slug} --skip-plugins --skip-themes --skip-packages >& /dev/null; /bin/test 1 == $?'",
       ],
     }
   }
@@ -53,8 +53,8 @@ define wp::plugin (
         command => "/usr/bin/wp plugin activate ${slug} ${network_arg} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
-          '/usr/bin/wp core is-installed',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
+          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} --skip-plugins --skip-themes --skip-packages | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
         ],
       }
     }
@@ -65,8 +65,8 @@ define wp::plugin (
         command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
-          '/usr/bin/wp core is-installed',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
+          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} --skip-plugins --skip-themes --skip-packages | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
         ],
       }
     }
@@ -78,8 +78,8 @@ define wp::plugin (
         command => "/usr/bin/wp plugin delete ${slug} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
-          '/usr/bin/wp core is-installed',
-          "/bin/bash -c 'if [[ -d \"$(wp --allow-root plugin path)/${slug}\" ]]; then true; else false; fi'",
+          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
+          "/bin/bash -c 'if [[ -d \"$(/usr/bin/wp plugin path --skip-plugins --skip-themes --skip-packages)/${slug}\" ]]; then true; else false; fi'",
         ]
       }
     }
@@ -90,8 +90,8 @@ define wp::plugin (
         command => "/usr/bin/wp plugin uninstall ${slug} --deactivate --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
-          '/usr/bin/wp core is-installed',
-          "/usr/bin/wp plugin is-installed ${slug}",
+          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
+          "/usr/bin/wp plugin is-installed ${slug} --skip-plugins --skip-themes --skip-packages",
         ],
       }
     }

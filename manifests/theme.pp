@@ -16,7 +16,7 @@ define wp::theme (
       location => $location,
       command  => "theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
       user     => $user,
-      unless   => "/usr/bin/wp theme is-installed ${theme_name}"
+      unless   => "/usr/bin/wp theme is-installed ${theme_name} --skip-plugins --skip-themes --skip-packages"
     }
   }
 
@@ -27,7 +27,7 @@ define wp::theme (
         $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'site' ]]\""
       } else {
         $command = "enable ${theme_name}"
-        $check = "/usr/bin/wp theme status ${theme_name} | grep -q Status:\\ Active"
+        $check = "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | grep -q Status:\\ Active"
       }
     }
     disabled: {
@@ -36,7 +36,7 @@ define wp::theme (
         $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'no' ]]\""
       } else {
         $command = "disable ${theme_name}"
-        $check = "/usr/bin/wp theme status ${theme_name} | grep -q Status:\\ Inactive"
+        $check = "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | grep -q Status:\\ Inactive"
       }
     }
     installed: {
