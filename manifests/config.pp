@@ -24,16 +24,32 @@ define wp::config (
     $multisitephp = ''
   }
 
-  $extraphp_str = "${multisitephp}${extraphp}"
+  $extraphp_str = @("EOF"/L)
+    ${multisitephp}\n\
+    \n\
+    if (file_exists('wp-config-puppet.php')) {\n\
+        include 'wp-config-puppet.php';\n\
+    }\n
+    | -EOF
 
   if $extraphp_str != '' {
     # lint:ignore:140chars
-    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php <<PHP\n${extraphp_str}\nPHP"
+    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php \"<<PHP\n${extraphp_str}\nPHP\""
     # lint:endignore
   } else {
     # lint:ignore:140chars
     $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}'"
     # lint:endignore
+  }
+
+  if $extraphp != '' {
+    file { "${location}/wp-config-puppet.php":
+      ensure  => 'present',
+      owner   => $user,
+      group   => $user,
+      mode    => '0644',
+      content => $extraphp,
+    }
   }
 
   exec {"wp config ${location}":
