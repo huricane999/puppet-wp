@@ -50,7 +50,8 @@ define wp::theme (
           cwd     => $location,
           user    => $user,
           unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp --allow-root theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | grep Status | grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp --allow-root site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
-          require => [ Class['wp::cli'] ],
+          require => Class['wp::cli'],
+          before  => Wp::Command["${location} theme ${command}"],
         }
         # lint:endignore
       }
