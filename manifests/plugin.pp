@@ -36,7 +36,7 @@ define wp::plugin (
     exec { "${location} install plugin \"${source}\" ${held_arg}":
       cwd     => $location,
       user    => $user,
-      command => "/usr/bin/wp plugin install \"${source}\" ${held_arg}",
+      command => "/usr/bin/wp plugin install \"${source}\" ${held_arg} --skip-plugins --skip-themes --skip-packages",
       require => Class['wp::cli'],
       onlyif  => [
         '/usr/bin/wp core is-installed',
@@ -50,7 +50,7 @@ define wp::plugin (
       exec { "${location} enable plugin \"${source}\" ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin activate ${slug} ${network_arg}",
+        command => "/usr/bin/wp plugin activate ${slug} ${network_arg} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
@@ -62,7 +62,7 @@ define wp::plugin (
       exec { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug}",
+        command => "/usr/bin/wp plugin deactivate ${network_arg} ${slug} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
@@ -75,7 +75,7 @@ define wp::plugin (
       exec { "${location} delete plugin ${slug}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin delete ${slug}",
+        command => "/usr/bin/wp plugin delete ${slug} --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
@@ -87,7 +87,7 @@ define wp::plugin (
       exec { "${location} uninstall plugin ${slug}":
         cwd     => $location,
         user    => $user,
-        command => "/usr/bin/wp plugin uninstall ${slug} --deactivate",
+        command => "/usr/bin/wp plugin uninstall ${slug} --deactivate --skip-plugins --skip-themes --skip-packages",
         require => Class['wp::cli'],
         onlyif  => [
           '/usr/bin/wp core is-installed',
