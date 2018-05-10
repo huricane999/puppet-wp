@@ -12,15 +12,12 @@ define wp::theme (
   include wp::cli
 
   if $manage_install {
-    exec { "${location} wp theme install ${theme_name}":
-      command => "/usr/bin/wp theme install \"${install_name}\"",
-      cwd     => $location,
-      user    => $user,
-      require => [ Class['wp::cli'] ],
-      unless  => "/usr/bin/wp theme is-installed ${theme_name}"
+    wp::command{ "${location} wp theme install ${theme_name}":
+      location => $location,
+      command  => "/usr/bin/wp theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
+      user     => $user,
+      unless   => "/usr/bin/wp theme is-installed ${theme_name}"
     }
-
-
   }
 
   case $ensure {
@@ -53,7 +50,7 @@ define wp::theme (
   if $command {
     wp::command { "${location} theme ${command}":
       location => $location,
-      command  => "theme ${command}",
+      command  => "theme ${command} --skip-plugins --skip-themes --skip-packages",
       user     => $user,
       unless   => $check,
     }
