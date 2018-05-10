@@ -40,13 +40,8 @@ define wp::theme (
       }
     }
     uninstalled: {
-      if $networkwide {
-        $command = "delete ${theme_name}"
-        $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'no' ]]\""
-      } else {
-        $command = "disable ${theme_name}"
-        $check = "/bin/bash -c '/usr/bin/wp theme is-installed ${theme_name} --skip-plugins --skip-themes --skip-packages >& /dev/null; /bin/test 1 == $?'"
-      }
+      $command = "delete ${theme_name}"
+      $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'no' ]]\""
     }
     installed: {
       $command = false
