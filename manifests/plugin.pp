@@ -39,7 +39,7 @@ define wp::plugin (
 
   case $ensure {
     enabled: {
-      exec { "${location} install plugin \"${source}\" ${network_arg} ${held_arg}":
+      exec { "${location} enable plugin \"${source}\" ${network_arg} ${held_arg}":
         cwd     => $location,
         user    => $user,
         command => "/usr/bin/wp plugin activate ${slug} ${network_arg}",
