@@ -65,7 +65,7 @@ define wp::theme (
                 | grep Status \
                 | grep -q Active; \
               if [ $? -eq 0 ]; then \
-                let \"ret++\"; \
+                let \\\"ret++\\\"; \
               fi; \
               done <<< \
                 \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; \
