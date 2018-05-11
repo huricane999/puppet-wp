@@ -3,7 +3,7 @@ define wp::download (
   $ensure = 'installed',
   $location = $title,
   $locale   = 'en_US',
-  $version  = '4.6.1',
+  $version  = 'latest',
   $force    = false,
   $user     = $::wp::user
 ) {
