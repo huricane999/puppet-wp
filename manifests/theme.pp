@@ -16,7 +16,8 @@ define wp::theme (
       location => $location,
       command  => "theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
       user     => $user,
-      unless   => "/usr/bin/wp theme is-installed ${theme_name} --skip-plugins --skip-themes --skip-packages"
+      unless   => "/usr/bin/wp theme is-installed ${theme_name} --skip-plugins --skip-themes --skip-packages",
+      tag      => 'theme-installed',
     }
   }
 
@@ -52,7 +53,7 @@ define wp::theme (
           unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | grep Status | grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret == 0'",
           require => Class['wp::cli'],
           before  => Wp::Command["${location} theme ${command}"],
-          tag     => 'uninstalled',
+          tag     => 'theme-uninstalled',
         }
         ->exec { "${location} network disable theme ${theme_name}":
           command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
@@ -61,7 +62,7 @@ define wp::theme (
           unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp --allow-root theme list --url=\$line --skip-plugins --skip-themes --skip-packages | grep -e ${theme_name} | grep -q \"network\|site\"; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp --allow-root site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
           require => Class['wp::cli'],
           before  => Wp::Command["${location} theme ${command}"],
-          tag     => 'uninstalled',
+          tag     => 'theme-uninstalled',
         }
         # lint:endignore
       }
@@ -80,13 +81,13 @@ define wp::theme (
       command  => "theme ${command} --skip-plugins --skip-themes --skip-packages",
       user     => $user,
       unless   => $check,
-      tag      => $ensure,
+      tag      => "theme-${ensure}",
     }
 
     if $manage_install {
       Wp::Command["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
 
-    Wp::Command<| tag == 'enabled' |> -> Wp::Command<| tag == 'uninstalled' |>
+    Wp::Command<| tag == 'theme-installed' |> -> Wp::Command<| tag == 'theme-enabled' |> -> Wp::Command<| tag == 'theme-uninstalled' |>
   }
 }
