@@ -44,12 +44,40 @@ define wp::theme (
       $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | grep ${theme_name} | awk '{print \$5}'` =~ 'no' ]]\""
 
       if $networkwide {
+        $uninstall_command = @("EOC"/L)
+          "/bin/bash -c '\
+            while read line; do \
+              /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; \
+              /usr/bin/wp theme activate \
+                $(wp --allow-root theme list --url=\$line --skip-plugins --skip-themes --skip-packages \
+                | grep -e site \
+                | awk \'{print \$1}\') \
+                --url=\$line --skip-plugins --skip-themes --skip-packages; \
+            done <<< \
+              \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'"
+          | EOC
+
+        $uninstall_check = @("EOC"/L)
+          "/bin/bash -c '\
+            ret=0; \
+            while read line; do \
+              /usr/bin/wp --allow-root theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages \
+                | grep Status \
+                | grep -q Active; \
+              if [ $? -eq 0 ]; then \
+                let \"ret++\"; \
+              fi; \
+              done <<< \
+                \"$(/usr/bin/wp --allow-root site list --field=url --skip-plugins --skip-themes --skip-packages)\"; \
+              /bin/test \$ret == 0'",
+          | EOC
+
         # lint:ignore:140chars
         exec { "${location} network disable theme ${theme_name}":
-          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
+          command => $uninstall_command,
           cwd     => $location,
           user    => $user,
-          unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp --allow-root theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | grep Status | grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp --allow-root site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
+          unless  => $uninstall_check,
           require => Class['wp::cli'],
           before  => Wp::Command["${location} theme ${command}"],
         }
@@ -70,10 +98,13 @@ define wp::theme (
       command  => "theme ${command} --skip-plugins --skip-themes --skip-packages",
       user     => $user,
       unless   => $check,
+      tag      => $ensure,
     }
 
     if $manage_install {
       Wp::Command["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
+
+    Wp::Command<| tag == 'enabled' |> -> Wp::Command<| tag == 'uninstalled' |>
   }
 }
