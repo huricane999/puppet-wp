@@ -46,7 +46,7 @@ define wp::theme (
       if $networkwide {
         # lint:ignore:140chars
         exec { "${location} network disable theme ${theme_name}":
-          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; /usr/bin/wp theme activate $(wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | grep -e site | awk \'{print \$1}\') --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
+          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; /usr/bin/wp theme activate $(wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | grep -e site | awk \\\'{print \$1}\\\') --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
           cwd     => $location,
           user    => $user,
           unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | grep Status | grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret == 0'",
