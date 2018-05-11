@@ -35,7 +35,7 @@ define wp::plugin (
   # lint:ignore:140chars
   if $ensure == 'installed' or $ensure == 'enabled' or $ensure == 'disabled' {
     wp::command { "${location} install plugin \"${source}\" ${held_arg}":
-      command  => "/usr/bin/wp plugin install \"${source}\" ${held_arg} --skip-plugins --skip-themes --skip-packages",
+      command  => "plugin install \"${source}\" ${held_arg} --skip-plugins --skip-themes --skip-packages",
       location => $location,
       user     => $user,
       onlyif   => [
@@ -49,7 +49,7 @@ define wp::plugin (
   case $ensure {
     enabled: {
       wp::command { "${location} enable plugin \"${source}\" ${network_arg} ${held_arg}":
-        command  => "/usr/bin/wp plugin activate ${slug} ${network_arg} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin activate ${slug} ${network_arg} --skip-plugins --skip-themes --skip-packages",
         location => $location,
         user     => $user,
         onlyif   => [
@@ -61,7 +61,7 @@ define wp::plugin (
     }
     disabled: {
       wp::command { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
-        command  => "/usr/bin/wp plugin deactivate ${network_arg} ${slug} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin deactivate ${network_arg} ${slug} --skip-plugins --skip-themes --skip-packages",
         location => $location,
         user     => $user,
         onlyif   => [
@@ -74,7 +74,7 @@ define wp::plugin (
     installed: {}
     deleted: {
       wp::command { "${location} delete plugin ${slug}":
-        command  => "/usr/bin/wp plugin delete ${slug} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin delete ${slug} --skip-plugins --skip-themes --skip-packages",
         location => $location,
         user     => $user,
         onlyif   => [
@@ -86,7 +86,7 @@ define wp::plugin (
     }
     uninstalled: {
       wp::command { "${location} uninstall plugin ${slug}":
-        command  => "/usr/bin/wp plugin uninstall ${slug} --deactivate --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin uninstall ${slug} --deactivate --skip-plugins --skip-themes --skip-packages",
         location => $location,
         user     => $user,
         onlyif   => [
