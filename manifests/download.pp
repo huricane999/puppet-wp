@@ -1,11 +1,12 @@
 # Download WordPress Core 
 define wp::download (
-  $ensure = 'installed',
-  $location = $title,
-  $locale   = 'en_US',
-  $version  = 'latest',
-  $force    = false,
-  $user     = $::wp::user
+  $ensure               = 'installed',
+  $location             = $title,
+  $locale               = 'en_US',
+  $version              = 'latest',
+  $force                = false,
+  $user                 = $::wp::user,
+  $purge_default_themes = false,
 ) {
   include wp::cli
 
@@ -22,6 +23,16 @@ define wp::download (
       require => [ Class['wp::cli'] ],
       path    => '/bin:/usr/bin:/usr/sbin',
       unless  => "ls ${location} | grep index.php > /dev/null 2>&1",
+    }
+
+    if $purge_default_themes {
+      exec { "${location} purge default themes":
+        command     => "/bin/rm -rf ${location}/wp-content/themes/twenty*",
+        user        => $user,
+        path        => '/bin:/usr/bin:/usr/sbin',
+        refreshonly => true,
+        subscribe   => Exec["wp download ${location}"],
+      }
     }
   }
   elsif 'absent' == $ensure {
