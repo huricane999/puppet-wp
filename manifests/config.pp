@@ -24,17 +24,16 @@ define wp::config (
     $multisitephp = ''
   }
 
-  $extraphp_str = @("EOF")
-    ${multisitephp}
-    
-    if (file_exists('wp-config-puppet.php')) {
-        include 'wp-config-puppet.php';
-    }
+  $extraphp_str = @("EOF"/L)
+    \n\
+    if (file_exists('wp-config-puppet.php')) {\n\
+        include 'wp-config-puppet.php';\n\
+    }\n
     | -EOF
 
   if $extraphp_str != '' {
     # lint:ignore:140chars
-    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php \"<<PHP\n${extraphp_str}\nPHP\""
+    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php \"<<PHP\n${multisitephp}\n${extraphp_str}\nPHP\""
     # lint:endignore
   } else {
     # lint:ignore:140chars
