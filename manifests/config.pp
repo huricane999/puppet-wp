@@ -97,14 +97,14 @@ define wp::config (
 
   wp::command { "${location} wp config set WP_ALLOW_MULTISITE":
     location => $location,
-    command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_str}",
+    command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_str} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get WP_ALLOW_MULTISITE`\" == '${multisite_int}'",
   }
 
   wp::command { "${location} wp config set MULTISITE":
     location => $location,
-    command  => "config set MULTISITE --raw ${multisite_str}",
+    command  => "config set MULTISITE --raw ${multisite_str} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get MULTISITE`\" == '${multisite_int}'",
   }
@@ -117,7 +117,7 @@ define wp::config (
   }
   wp::command { "${location} wp config set SUBDOMAIN_INSTALL":
     location => $location,
-    command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_str}",
+    command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_str} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get SUBDOMAIN_INSTALL`\" == '${ms_subdomain_int}'",
   }
@@ -126,12 +126,12 @@ define wp::config (
     location => $location,
     command  => "config set DOMAIN_CURRENT_SITE '${ms_domain}'",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get DOMAIN_CURRENT_SITE`\" == '${ms_domain}'",
+    unless   => "/bin/test \"`/usr/bin/wp config get DOMAIN_CURRENT_SITE`\" == '${ms_domain}' --type=constant",
   }
 
   wp::command { "${location} wp config set PATH_CURRENT_SITE":
     location => $location,
-    command  => "config set PATH_CURRENT_SITE '${ms_path}'",
+    command  => "config set PATH_CURRENT_SITE '${ms_path}' --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get PATH_CURRENT_SITE`\" == '${ms_path}'",
   }
@@ -140,13 +140,13 @@ define wp::config (
     location => $location,
     command  => "config set SITE_ID_CURRENT_SITE '${ms_site_id}'",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' SITE_ID_CURRENT_SITE`\" == '${ms_site_id}'",
+    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' SITE_ID_CURRENT_SITE`\" == '${ms_site_id}' --type=constant",
   }
 
   wp::command { "${location} wp config set BLOG_ID_CURRENT_SITE":
     location => $location,
     command  => "config set BLOG_ID_CURRENT_SITE '${ms_blog_id}'",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' BLOG_ID_CURRENT_SITE`\" == '${ms_blog_id}'",
+    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' BLOG_ID_CURRENT_SITE`\" == '${ms_blog_id}' --type=constant",
   }
 }
