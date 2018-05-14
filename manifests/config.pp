@@ -124,9 +124,9 @@ define wp::config (
 
   wp::command { "${location} wp config set DOMAIN_CURRENT_SITE":
     location => $location,
-    command  => "config set DOMAIN_CURRENT_SITE '${ms_domain}'",
+    command  => "config set DOMAIN_CURRENT_SITE '${ms_domain}' --type=constant",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get DOMAIN_CURRENT_SITE`\" == '${ms_domain}' --type=constant",
+    unless   => "/bin/test \"`/usr/bin/wp config get DOMAIN_CURRENT_SITE`\" == '${ms_domain}'",
   }
 
   wp::command { "${location} wp config set PATH_CURRENT_SITE":
@@ -138,15 +138,15 @@ define wp::config (
 
   wp::command { "${location} wp config set SITE_ID_CURRENT_SITE":
     location => $location,
-    command  => "config set SITE_ID_CURRENT_SITE '${ms_site_id}'",
+    command  => "config set SITE_ID_CURRENT_SITE '${ms_site_id}' --type=constant",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' SITE_ID_CURRENT_SITE`\" == '${ms_site_id}' --type=constant",
+    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' SITE_ID_CURRENT_SITE`\" == '${ms_site_id}'",
   }
 
   wp::command { "${location} wp config set BLOG_ID_CURRENT_SITE":
     location => $location,
-    command  => "config set BLOG_ID_CURRENT_SITE '${ms_blog_id}'",
+    command  => "config set BLOG_ID_CURRENT_SITE '${ms_blog_id}' --type=constant",
     user     => $user,
-    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' BLOG_ID_CURRENT_SITE`\" == '${ms_blog_id}' --type=constant",
+    unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' BLOG_ID_CURRENT_SITE`\" == '${ms_blog_id}'",
   }
 }
