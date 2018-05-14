@@ -24,12 +24,12 @@ define wp::config (
     $multisitephp = ''
   }
 
-  $extraphp_str = @("EOF"/L)
-    ${multisitephp}\n\
-    \n\
-    if (file_exists('wp-config-puppet.php')) {\n\
-        include 'wp-config-puppet.php';\n\
-    }\n
+  $extraphp_str = @("EOF")
+    ${multisitephp}
+    
+    if (file_exists('wp-config-puppet.php')) {
+        include 'wp-config-puppet.php';
+    }
     | -EOF
 
   if $extraphp_str != '' {
