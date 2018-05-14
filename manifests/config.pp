@@ -88,7 +88,6 @@ define wp::config (
     unless   => "/bin/test \"`/usr/bin/wp config get table_prefix`\" == '${dbprefix}'",
   }
 
-  $multisite_str = bool2str($multisite)
   if $multisite {
     $multisite_int = '1'
   } else {
@@ -97,19 +96,18 @@ define wp::config (
 
   wp::command { "${location} wp config set WP_ALLOW_MULTISITE":
     location => $location,
-    command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_str} --type=constant",
+    command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_int} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get WP_ALLOW_MULTISITE`\" == '${multisite_int}'",
   }
 
   wp::command { "${location} wp config set MULTISITE":
     location => $location,
-    command  => "config set MULTISITE --raw ${multisite_str} --type=constant",
+    command  => "config set MULTISITE --raw ${multisite_int} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get MULTISITE`\" == '${multisite_int}'",
   }
 
-  $ms_subdomain_str = bool2str($ms_subdomain)
   if $ms_subdomain {
     $ms_subdomain_int = '1'
   } else {
@@ -117,7 +115,7 @@ define wp::config (
   }
   wp::command { "${location} wp config set SUBDOMAIN_INSTALL":
     location => $location,
-    command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_str} --type=constant",
+    command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_int} --type=constant",
     user     => $user,
     unless   => "/bin/test \"`/usr/bin/wp config get SUBDOMAIN_INSTALL`\" == '${ms_subdomain_int}'",
   }
