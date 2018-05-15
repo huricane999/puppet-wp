@@ -18,11 +18,11 @@ define wp::config (
 ) {
   include wp::cli
 
-  $extraphp_str = @("EOF"/L)
-    \n\
-    if (file_exists('wp-config-puppet.php')) {\n\
-        include 'wp-config-puppet.php';\n\
-    }\n
+  $extraphp_str = @("EOF")
+    
+    if (file_exists('wp-config-puppet.php')) {
+        include 'wp-config-puppet.php';
+    }
     | -EOF
 
   if $extraphp_str != '' {
