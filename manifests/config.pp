@@ -142,49 +142,49 @@ define wp::config (
       location => $location,
       command  => 'config delete WP_ALLOW_MULTISITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has WP_ALLOW_MULTISITE',
+      onlyif   => '/usr/bin/wp config has WP_ALLOW_MULTISITE',
     }
 
     wp::command { "${location} wp config delete MULTISITE":
       location => $location,
       command  => 'config delete MULTISITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has MULTISITE',
+      onlyif   => '/usr/bin/wp config has MULTISITE',
     }
 
     wp::command { "${location} wp config delete SUBDOMAIN_INSTALL":
       location => $location,
       command  => 'config delete SUBDOMAIN_INSTALL',
       user     => $user,
-      unless   => '/usr/bin/wp config has SUBDOMAIN_INSTALL',
+      onlyif   => '/usr/bin/wp config has SUBDOMAIN_INSTALL',
     }
 
     wp::command { "${location} wp config delete DOMAIN_CURRENT_SITE":
       location => $location,
       command  => 'config delete DOMAIN_CURRENT_SITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has DOMAIN_CURRENT_SITE',
+      onlyif   => '/usr/bin/wp config has DOMAIN_CURRENT_SITE',
     }
 
     wp::command { "${location} wp config delete PATH_CURRENT_SITE":
       location => $location,
       command  => 'config delete PATH_CURRENT_SITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has PATH_CURRENT_SITE',
+      onlyif   => '/usr/bin/wp config has PATH_CURRENT_SITE',
     }
 
     wp::command { "${location} wp config delete SITE_ID_CURRENT_SITE":
       location => $location,
       command  => 'config delete SITE_ID_CURRENT_SITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has SITE_ID_CURRENT_SITE',
+      onlyif   => '/usr/bin/wp config has SITE_ID_CURRENT_SITE',
     }
 
     wp::command { "${location} wp config delete BLOG_ID_CURRENT_SITE":
       location => $location,
       command  => 'config delete BLOG_ID_CURRENT_SITE',
       user     => $user,
-      unless   => '/usr/bin/wp config has BLOG_ID_CURRENT_SITE',
+      onlyif   => '/usr/bin/wp config has BLOG_ID_CURRENT_SITE',
     }
   }
 }
