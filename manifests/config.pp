@@ -41,7 +41,7 @@ define wp::config (
       owner   => $user,
       group   => $user,
       mode    => '0644',
-      content => $extraphp,
+      content => "<?php\n${extraphp}\n?>",
     }
   }
 
