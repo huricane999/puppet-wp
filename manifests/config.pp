@@ -18,12 +18,6 @@ define wp::config (
 ) {
   include wp::cli
 
-  if $multisite {
-    $multisitephp = template( 'wp/config_extraphp_multisite.erb' )
-  } else {
-    $multisitephp = ''
-  }
-
   $extraphp_str = @("EOF"/L)
     \n\
     if (file_exists('wp-config-puppet.php')) {\n\
@@ -33,7 +27,7 @@ define wp::config (
 
   if $extraphp_str != '' {
     # lint:ignore:140chars
-    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php \"<<PHP\n${multisitephp}\n${extraphp_str}\nPHP\""
+    $config = "config --path='${location}' --dbname='${dbname}' --dbuser='${dbuser}' --dbpass='${dbpass}' --dbhost='${dbhost}' --dbprefix='${dbprefix}' --extra-php <<PHP\n${extraphp_str}\nPHP"
     # lint:endignore
   } else {
     # lint:ignore:140chars
