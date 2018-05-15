@@ -82,34 +82,6 @@ define wp::config (
   }
 
   if $multisite {
-    $multisite_int = '1'
-
-    wp::command { "${location} wp config set WP_ALLOW_MULTISITE":
-      location => $location,
-      command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_int} --type=constant",
-      user     => $user,
-      unless   => "/bin/test \"`/usr/bin/wp config get WP_ALLOW_MULTISITE`\" == '${multisite_int}'",
-    }
-
-    wp::command { "${location} wp config set MULTISITE":
-      location => $location,
-      command  => "config set MULTISITE --raw ${multisite_int} --type=constant",
-      user     => $user,
-      unless   => "/bin/test \"`/usr/bin/wp config get MULTISITE`\" == '${multisite_int}'",
-    }
-
-    if $ms_subdomain {
-      $ms_subdomain_int = '1'
-    } else {
-      $ms_subdomain_int = '0'
-    }
-    wp::command { "${location} wp config set SUBDOMAIN_INSTALL":
-      location => $location,
-      command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_int} --type=constant",
-      user     => $user,
-      unless   => "/bin/test \"`/usr/bin/wp config get SUBDOMAIN_INSTALL`\" == '${ms_subdomain_int}'",
-    }
-
     wp::command { "${location} wp config set DOMAIN_CURRENT_SITE":
       location => $location,
       command  => "config set DOMAIN_CURRENT_SITE '${ms_domain}' --type=constant",
@@ -136,6 +108,34 @@ define wp::config (
       command  => "config set BLOG_ID_CURRENT_SITE '${ms_blog_id}' --type=constant",
       user     => $user,
       unless   => "/bin/test \"`/usr/bin/wp config get --path='${location}' BLOG_ID_CURRENT_SITE`\" == '${ms_blog_id}'",
+    }
+
+    $multisite_int = '1'
+
+    wp::command { "${location} wp config set WP_ALLOW_MULTISITE":
+      location => $location,
+      command  => "config set WP_ALLOW_MULTISITE --raw ${multisite_int} --type=constant",
+      user     => $user,
+      unless   => "/bin/test \"`/usr/bin/wp config get WP_ALLOW_MULTISITE`\" == '${multisite_int}'",
+    }
+
+    wp::command { "${location} wp config set MULTISITE":
+      location => $location,
+      command  => "config set MULTISITE --raw ${multisite_int} --type=constant",
+      user     => $user,
+      unless   => "/bin/test \"`/usr/bin/wp config get MULTISITE`\" == '${multisite_int}'",
+    }
+
+    if $ms_subdomain {
+      $ms_subdomain_int = '1'
+    } else {
+      $ms_subdomain_int = '0'
+    }
+    wp::command { "${location} wp config set SUBDOMAIN_INSTALL":
+      location => $location,
+      command  => "config set SUBDOMAIN_INSTALL --raw ${ms_subdomain_int} --type=constant",
+      user     => $user,
+      unless   => "/bin/test \"`/usr/bin/wp config get SUBDOMAIN_INSTALL`\" == '${ms_subdomain_int}'",
     }
   } else {
     wp::command { "${location} wp config delete WP_ALLOW_MULTISITE":
