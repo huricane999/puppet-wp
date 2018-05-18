@@ -70,7 +70,7 @@ define wp::theme (
           tag     => 'theme-uninstalled',
         }
         ->exec { "${location} network deactivate theme ${theme_name}":
-          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme activate \"$(/usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep -e \\\"network\|site\\\" | /bin/awk \\\"{print \\\$1}\\\")\" --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$( /usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages )\"'",
+          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme activate \"$(/usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep -e \"network\|site\" | head -n 1 | /bin/awk \"{print \\\$1}\")\" --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$( /usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages )\"'",
           cwd     => $location,
           user    => $user,
           unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep Status | /bin/grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret == 0'",
