@@ -11,7 +11,7 @@ define wp::theme (
   #$name = $title,
   include wp::cli
 
-  if $manage_install {
+  if $manage_install and $ensure != 'uninstalled' {
     wp::command{ "${location} wp theme install ${theme_name}":
       location => $location,
       command  => "theme install \"${install_name}\" --skip-plugins --skip-themes --skip-packages",
