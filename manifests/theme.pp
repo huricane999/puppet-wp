@@ -48,14 +48,14 @@ define wp::theme (
         location => $location,
         command  => "theme disable ${theme_name} --skip-plugins --skip-themes --skip-packages",
         user     => $user,
-        unless   => "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | grep -q Status:\\ Inactive",
+        unless   => "/bin/bash -c '/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | grep -q Status:\\ Inactive'",
         tag      => 'theme-uninstalled',
       }
       ->exec { "${location} deactivate theme ${theme_name}":
         command => "/bin/bash -c '/usr/bin/wp theme activate \"$(/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | grep -v ${theme_name} | grep -m1 -e \"network\|site\" | awk \"{print \\\$1}\")\" --skip-plugins --skip-themes --skip-packages'",
         cwd     => $location,
         user    => $user,
-        unless  => "/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | grep -e ${theme_name} | grep -q inactive",
+        unless  => "/bin/bash -c '/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | grep -e ${theme_name} | grep -q inactive'",
         tag     => 'theme-uninstalled',
       }
       if $networkwide {
