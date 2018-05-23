@@ -42,7 +42,7 @@ define wp::theme (
     }
     uninstalled: {
       $command = "delete ${theme_name} --skip-plugins --skip-themes --skip-packages"
-      $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` == 'no' ]]\""
+      $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` != 'no' ]]\""
 
       wp::command { "${location} disable theme ${theme_name}":
         location => $location,
