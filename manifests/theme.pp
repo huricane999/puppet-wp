@@ -40,7 +40,8 @@ define wp::theme (
         $check = "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | /bin/grep -q Status:\\ Inactive"
       }
     }
-    uninstalled: {
+    'absent','uninstalled': {
+      # lint:ignore:140chars
       $command = "delete ${theme_name} --skip-plugins --skip-themes --skip-packages"
       $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` != 'no' ]]\""
 
@@ -59,7 +60,6 @@ define wp::theme (
         tag     => 'theme-uninstalled',
       }
       if $networkwide {
-        # lint:ignore:140chars
         exec { "${location} network disable theme ${theme_name}":
           command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
           cwd     => $location,
@@ -77,10 +77,10 @@ define wp::theme (
           before  => Wp::Command["${location} theme ${command}"],
           tag     => 'theme-uninstalled',
         }
-        # lint:endignore
       }
+      # lint:endignore
     }
-    installed: {
+    'present','installed': {
       $command = false
     }
     default: {
