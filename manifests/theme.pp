@@ -97,7 +97,7 @@ define wp::theme (
       tag      => "theme-${ensure}",
     }
 
-    if $manage_install {
+    if $manage_install and $ensure != 'uninstalled' {
       Wp::Command["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
 
