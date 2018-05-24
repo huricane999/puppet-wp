@@ -40,7 +40,7 @@ define wp::theme (
         $check = "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | /bin/grep -q Status:\\ Inactive"
       }
     }
-    'absent','uninstalled': {
+    /^(absent|uninstalled)$/: {
       # lint:ignore:140chars
       $command = "delete ${theme_name}"
       $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` != 'no' ]]\""
@@ -85,7 +85,7 @@ define wp::theme (
       }
       # lint:endignore
     }
-    'present','installed': {
+    /^(present|installed)$/: {
       $command = false
     }
     default: {
