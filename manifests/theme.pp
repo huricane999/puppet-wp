@@ -111,6 +111,8 @@ define wp::theme (
       Wp::Command["${location} wp theme install ${theme_name}"] -> Wp::Command["${location} theme ${command}"]
     }
 
-    Wp::Command<| tag == 'theme-installed' |> -> Wp::Command<| tag == 'theme-enabled' |> -> Wp::Command<| tag == 'theme-uninstalled' |>
+    # lint:ignore:140chars
+    Wp::Command<| tag == 'theme-installed' or tag == 'theme-present' |> -> Wp::Command<| tag == 'theme-enabled' |> -> Wp::Command<| tag == 'theme-uninstalled' or tag == 'theme-absent' |>
+    # lint:endignore
   }
 }
