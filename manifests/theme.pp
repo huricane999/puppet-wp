@@ -25,7 +25,7 @@ define wp::theme (
     enabled: {
       if $networkwide {
         $command = "enable ${theme_name} --network"
-        $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` =~ 'site' ]]\""
+        $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` =~ 'network' ]]\""
       } else {
         $command = "enable ${theme_name}"
         $check = "/usr/bin/wp theme status ${theme_name} --skip-plugins --skip-themes --skip-packages | /bin/grep -q Status:\\ Active"
