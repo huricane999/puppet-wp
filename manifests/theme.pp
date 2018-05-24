@@ -24,7 +24,7 @@ define wp::theme (
   case $ensure {
     enabled: {
       if $networkwide {
-        $command = "enable ${theme_name} --network --skip-plugins --skip-themes --skip-packages"
+        $command = "enable ${theme_name} --network"
         $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` =~ 'site' ]]\""
       } else {
         $command = "enable ${theme_name}"
@@ -33,7 +33,7 @@ define wp::theme (
     }
     disabled: {
       if $networkwide {
-        $command = "disable ${theme_name} --network --skip-plugins --skip-themes --skip-packages"
+        $command = "disable ${theme_name} --network"
         $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` =~ 'no' ]]\""
       } else {
         $command = "disable ${theme_name}"
@@ -42,7 +42,7 @@ define wp::theme (
     }
     'absent','uninstalled': {
       # lint:ignore:140chars
-      $command = "delete ${theme_name} --skip-plugins --skip-themes --skip-packages"
+      $command = "delete ${theme_name}"
       $check = "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` != 'no' ]]\""
       $only_if = "/bin/bash -c '/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}"
 
