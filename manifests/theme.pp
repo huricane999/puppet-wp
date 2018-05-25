@@ -43,10 +43,7 @@ define wp::theme (
     /^(absent|uninstalled)$/: {
       # lint:ignore:140chars
       $command = "delete ${theme_name}"
-      $only_if = [
-        "/bin/bash -c \"[[ `/usr/bin/wp theme list | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` == 'no' ]]\"",
-        "/bin/bash -c '/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
-      ],
+      $only_if = "/bin/bash -c \"[[ `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \$5}'` == 'no' ]]\""
 
       wp::command { "${location} disable theme ${theme_name}":
         location => $location,
