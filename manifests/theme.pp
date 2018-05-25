@@ -64,16 +64,16 @@ define wp::theme (
           command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
           cwd     => $location,
           user    => $user,
-          unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/grep -q \"network\\|site\"; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
+          unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk \'{print \$5}\' | /bin/grep -q site; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret == 0'",
           require => Exec["${location} deactivate theme ${theme_name}"],
           before  => Wp::Command["${location} theme ${command}"],
           tag     => 'theme-uninstalled',
         }
         ->exec { "${location} network deactivate theme ${theme_name}":
-          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme activate \"$(/usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep -e \"network\|site\" | head -n 1 | /bin/awk \"{print \\\$1}\")\" --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$( /usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages )\"'",
+          command => "/bin/bash -c 'while read line; do /usr/bin/wp theme activate \"$(/usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep -e \"network\\|site\" | head -n 1 | /bin/awk \"{print \\\$1}\")\" --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$( /usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages )\"'",
           cwd     => $location,
           user    => $user,
-          unless  => "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme status ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep Status | /bin/grep -q Active; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret == 0'",
+          unless  => "/bin/bash -c 'ret=0; while read line; do if [ `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \$2}'` == 'active' ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret == 0'",
           before  => Wp::Command["${location} theme ${command}"],
           tag     => 'theme-uninstalled',
         }
