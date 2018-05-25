@@ -53,7 +53,7 @@ define wp::theme (
         tag      => 'theme-uninstalled',
       }
       ->exec { "${location} deactivate theme ${theme_name}":
-        command => "/bin/bash -c \"/usr/bin/wp theme activate `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -v ${theme_name} | /bin/grep -m1 -e \"network\\|site\" | /bin/awk \"{print \\\$1}\"` --skip-plugins --skip-themes --skip-packages\"",
+        command => "/bin/bash -c \"/usr/bin/wp theme activate `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -v ${theme_name} | /bin/grep -m1 -e \"network\\|site\" | /bin/awk '{print \$1}'` --skip-plugins --skip-themes --skip-packages\"",
         cwd     => $location,
         user    => $user,
         onlyif  => "/bin/bash -c \"[[ `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \\\$2}'` == 'active' ]]\"",
