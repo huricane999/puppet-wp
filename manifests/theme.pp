@@ -60,7 +60,14 @@ define wp::theme (
         tag     => 'theme-uninstalled',
       }
       if $networkwide {
-        exec { "${location} network disable theme ${theme_name}":
+        wp::command { "${location} network disable theme ${theme_name}":
+          location => $location,
+          command  => "theme disable ${theme_name} --network --skip-plugins --skip-themes --skip-packages",
+          user     => $user,
+          onlyif   => "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \\\$5}' | /bin/grep -q network\"",
+          tag      => 'theme-uninstalled',
+        }
+        ->exec { "${location} sites disable theme ${theme_name}":
           command => "/bin/bash -c 'while read line; do /usr/bin/wp theme disable ${theme_name} --url=\$line --skip-plugins --skip-themes --skip-packages; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"'",
           cwd     => $location,
           user    => $user,
