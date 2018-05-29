@@ -50,7 +50,7 @@ define wp::theme (
         command  => "theme disable ${theme_name} --skip-plugins --skip-themes --skip-packages",
         user     => $user,
         onlyif   => [
-          "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
+          "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}\"",
           "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \\\$5}' | /bin/grep -q site\"",
         ],
         tag      => 'theme-uninstalled',
@@ -60,7 +60,7 @@ define wp::theme (
         cwd     => $location,
         user    => $user,
         onlyif  => [
-          "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
+          "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}\"",
           "/bin/bash -c \"[[ `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \\\$2}'` == 'active' ]]\"",
         ],
         tag     => 'theme-uninstalled',
@@ -71,7 +71,7 @@ define wp::theme (
           command  => "theme disable ${theme_name} --network --skip-plugins --skip-themes --skip-packages",
           user     => $user,
           onlyif   => [
-            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
+            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}\"",
             "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \\\$5}' | /bin/grep -q network\"",
           ],
           tag      => 'theme-uninstalled',
@@ -81,7 +81,7 @@ define wp::theme (
           cwd     => $location,
           user    => $user,
           onlyif  => [
-            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
+            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}\"",
             "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp theme list --url=\$line --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk \'{print \$5}\' | /bin/grep -q site; if [ $? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; echo \$ret; /bin/test \$ret -gt 0'",
           ],
           require => Exec["${location} deactivate theme ${theme_name}"],
@@ -93,7 +93,7 @@ define wp::theme (
           cwd     => $location,
           user    => $user,
           onlyif  => [
-            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}",
+            "/bin/bash -c \"/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep -q ${theme_name}\"",
             "/bin/bash -c 'ret=0; while read line; do if [ `/usr/bin/wp theme list --skip-plugins --skip-themes --skip-packages | /bin/grep ${theme_name} | /bin/awk '{print \$2}'` == 'active' ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url --skip-plugins --skip-themes --skip-packages)\"; /bin/test \$ret -gt 0'",
           ],
           before  => Wp::Command["${location} theme ${command}"],
