@@ -35,12 +35,12 @@ define wp::plugin (
   # lint:ignore:140chars
   if $ensure == 'installed' or $ensure == 'enabled' or $ensure == 'disabled' {
     wp::command { "${location} install plugin \"${source}\" ${held_arg}":
-      command  => "plugin install \"${source}\" ${held_arg} --skip-plugins --skip-themes --skip-packages",
+      command  => "plugin install \"${source}\" ${held_arg}",
       location => $location,
       user     => $user,
       onlyif   => [
-        '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
-        "/bin/bash -c '/usr/bin/wp plugin is-installed ${slug} --skip-plugins --skip-themes --skip-packages >& /dev/null; /bin/test 1 == $?'",
+        '/usr/bin/wp core is-installed',
+        "/bin/bash -c '/usr/bin/wp plugin is-installed ${slug} >& /dev/null; /bin/test 1 == $?'",
       ],
       tag      => 'plugin-installed'
     }
@@ -49,24 +49,24 @@ define wp::plugin (
   case $ensure {
     enabled: {
       wp::command { "${location} enable plugin \"${source}\" ${network_arg} ${held_arg}":
-        command  => "plugin activate ${slug} ${network_arg} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin activate ${slug} ${network_arg}",
         location => $location,
         user     => $user,
         onlyif   => [
-          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} --skip-plugins --skip-themes --skip-packages | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
+          '/usr/bin/wp core is-installed',
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
         ],
         tag      => 'plugin-enabled',
       }
     }
     disabled: {
       wp::command { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
-        command  => "plugin deactivate ${network_arg} ${slug} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin deactivate ${network_arg} ${slug}",
         location => $location,
         user     => $user,
         onlyif   => [
-          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} --skip-plugins --skip-themes --skip-packages | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
+          '/usr/bin/wp core is-installed',
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
         ],
         tag      => 'plugin-disabled',
       }
@@ -74,24 +74,24 @@ define wp::plugin (
     installed: {}
     deleted: {
       wp::command { "${location} delete plugin ${slug}":
-        command  => "plugin delete ${slug} --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin delete ${slug}",
         location => $location,
         user     => $user,
         onlyif   => [
-          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
-          "/bin/bash -c 'if [[ -d \"$(/usr/bin/wp plugin path --skip-plugins --skip-themes --skip-packages)/${slug}\" ]]; then true; else false; fi'",
+          '/usr/bin/wp core is-installed',
+          "/bin/bash -c 'if [[ -d \"$(/usr/bin/wp plugin path)/${slug}\" ]]; then true; else false; fi'",
         ],
         tag      => 'plugin-deleted',
       }
     }
     uninstalled: {
       wp::command { "${location} uninstall plugin ${slug}":
-        command  => "plugin uninstall ${slug} --deactivate --skip-plugins --skip-themes --skip-packages",
+        command  => "plugin uninstall ${slug} --deactivate",
         location => $location,
         user     => $user,
         onlyif   => [
-          '/usr/bin/wp core is-installed --skip-plugins --skip-themes --skip-packages',
-          "/usr/bin/wp plugin is-installed ${slug} --skip-plugins --skip-themes --skip-packages",
+          '/usr/bin/wp core is-installed',
+          "/usr/bin/wp plugin is-installed ${slug}",
         ],
         tag      => 'plugin-uninstalled',
       }
