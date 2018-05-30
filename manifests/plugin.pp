@@ -44,14 +44,29 @@ define wp::plugin (
     }
 
     if $version != 'latest' {
-      wp::command { "${location} enforce plugin version \"${source}\" ${held_arg}":
-        command  => "plugin install \"${source}\" ${held_arg} --force",
-        location => $location,
-        user     => $user,
-        onlyif   => '/usr/bin/wp core is-installed',
-        unless   => "/bin/bash -c '/bin/test `/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'` == ${version}'",
-        tag      => 'plugin-installed',
-        require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+      if $source =~ /\// {
+        # Not hosted by wordpress (update only)
+        wp::command { "${location} enforce plugin version \"${source}\" ${held_arg}":
+          command  => "plugin update \"${slug}\" ${held_arg}",
+          location => $location,
+          user     => $user,
+          onlyif   => [
+            '/usr/bin/wp core is-installed',
+            "/bin/php -r '\$version = `/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
+          ],
+          tag      => 'plugin-installed',
+          require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+        }
+      } else {
+        wp::command { "${location} enforce plugin version \"${source}\" ${held_arg}":
+          command  => "plugin install \"${source}\" ${held_arg} --force",
+          location => $location,
+          user     => $user,
+          onlyif   => '/usr/bin/wp core is-installed',
+          unless   => "/bin/bash -c '/bin/test `/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'` == ${version}'",
+          tag      => 'plugin-installed',
+          require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+        }
       }
     }
   }
