@@ -7,6 +7,7 @@ define wp::plugin (
   $networkwide = false,
   $networkuser = undef,
   $version = 'latest',
+  $min_version_update = false,
   $user = $::wp::user,
 ) {
   include wp::cli
@@ -44,27 +45,42 @@ define wp::plugin (
     }
 
     if $version != 'latest' {
-      wp::command { "${location} enforce plugin version upgrade \"${source}\" ${held_arg}":
-        command  => "plugin update \"${slug}\" ${held_arg}",
-        location => $location,
-        user     => $user,
-        onlyif   => [
-          '/usr/bin/wp core is-installed',
-          "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
-        ],
-        tag      => 'plugin-installed',
-        require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
-      }
-      wp::command { "${location} enforce plugin version downgrade \"${source}\" ${held_arg}":
-        command  => "plugin install \"${source}\" ${held_arg} --force",
-        location => $location,
-        user     => $user,
-        onlyif   => [
-          '/usr/bin/wp core is-installed',
-          "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") != 0) { exit(0); } else { exit(1); }'",
-        ],
-        tag      => 'plugin-installed',
-        require  => Wp::Command["${location} enforce plugin version upgrade \"${source}\" ${held_arg}"],
+      if $min_version_update {
+        wp::command { "${location} enforce plugin version upgrade \"${source}\" (Min Version: ${version})":
+          command  => "plugin update \"${slug}\"",
+          location => $location,
+          user     => $user,
+          onlyif   => [
+            '/usr/bin/wp core is-installed',
+            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
+          ],
+          tag      => 'plugin-installed',
+          require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+        }
+      } else {
+        wp::command { "${location} enforce plugin version upgrade \"${source}\" ${held_arg}":
+          command  => "plugin update \"${slug}\" ${held_arg}",
+          location => $location,
+          user     => $user,
+          onlyif   => [
+            '/usr/bin/wp core is-installed',
+            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
+          ],
+          tag      => 'plugin-installed',
+          require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+        }
+
+        wp::command { "${location} enforce plugin version downgrade \"${source}\" ${held_arg}":
+          command  => "plugin install \"${source}\" ${held_arg} --force",
+          location => $location,
+          user     => $user,
+          onlyif   => [
+            '/usr/bin/wp core is-installed',
+            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") != 0) { exit(0); } else { exit(1); }'",
+          ],
+          tag      => 'plugin-installed',
+          require  => Wp::Command["${location} enforce plugin version upgrade \"${source}\" ${held_arg}"],
+        }
       }
     }
   }
