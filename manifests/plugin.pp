@@ -52,7 +52,7 @@ define wp::plugin (
           user     => $user,
           onlyif   => [
             '/usr/bin/wp core is-installed',
-            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
+            "/bin/php -r \"if (version_compare('`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`', '${version}') < 0) { exit(0); } else { exit(1); }\"",
           ],
           tag      => 'plugin-installed',
           require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
@@ -64,7 +64,7 @@ define wp::plugin (
           user     => $user,
           onlyif   => [
             '/usr/bin/wp core is-installed',
-            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") < 0) { exit(0); } else { exit(1); }'",
+            "/bin/php -r \"if (version_compare('`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`', '${version}') < 0) { exit(0); } else { exit(1); }\"",
           ],
           tag      => 'plugin-installed',
           require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
@@ -76,7 +76,7 @@ define wp::plugin (
           user     => $user,
           onlyif   => [
             '/usr/bin/wp core is-installed',
-            "/bin/php -r '\$version = \"`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`\"; if (version_compare(\$version, \"${version}\") != 0) { exit(0); } else { exit(1); }'",
+            "/bin/php -r \"if (version_compare('`/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'`', '${version}') != 0) { exit(0); } else { exit(1); }\"",
           ],
           tag      => 'plugin-installed',
           require  => Wp::Command["${location} enforce plugin version upgrade \"${source}\" ${held_arg}"],
