@@ -38,11 +38,21 @@ define wp::plugin (
       command  => "plugin install \"${source}\" ${held_arg}",
       location => $location,
       user     => $user,
-      onlyif   => [
-        '/usr/bin/wp core is-installed',
-        "/bin/bash -c '/usr/bin/wp plugin is-installed ${slug} >& /dev/null; /bin/test 1 == $?'",
-      ],
+      onlyif   => '/usr/bin/wp core is-installed',
+      unless   => "/usr/bin/wp plugin is-installed ${slug}",
       tag      => 'plugin-installed'
+    }
+
+    if $version != 'latest' {
+      wp::command { "${location} enforce plugin version \"${source}\" ${held_arg}":
+        command  => "plugin install \"${source}\" ${held_arg} --force",
+        location => $location,
+        user     => $user,
+        onlyif   => '/usr/bin/wp core is-installed',
+        unless   => "/bin/bash -c '/bin/test `/usr/bin/wp plugin status ${slug} | /bin/grep Version | /bin/awk '{print \$2}'` == ${version}'",
+        tag      => 'plugin-installed',
+        require  => Wp::Command["${location} install plugin \"${source}\" ${held_arg}"],
+      }
     }
   }
 
