@@ -102,8 +102,8 @@ define wp::plugin (
   }
 
   Wp::Command<| tag == 'plugin-uninstalled' |>
-  -> Wp::Command<| tag == 'plugin-disabled' |>
   -> Wp::Command<| tag == 'plugin-installed' |>
+  -> Wp::Command<| tag == 'plugin-disabled' |>
   -> Wp::Command<| tag == 'plugin-enabled' |>
   # lint:endignore
 }
