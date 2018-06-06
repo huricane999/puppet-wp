@@ -86,7 +86,7 @@ define wp::plugin (
       location => $location,
       user     => $user,
       onlyif   => [
-        '/usr/bin/wp core is-installed',,
+        '/usr/bin/wp core is-installed',
         "/usr/bin/wp plugin is-installed ${slug}",
         "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == \$?'",
       ],
