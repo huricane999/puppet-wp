@@ -98,7 +98,7 @@ define wp::plugin (
     }
 
     if $networkwide {
-      exec { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
+      exec { "${location} site deactivate plugin ${slug} ${network_arg} ${held_arg}":
         command => "/bin/bash -c 'while read line; do /usr/bin/wp plugin deactivate ${slug} --url=\$line; done <<< \"$(/usr/bin/wp site list --field=url)\"'",
         cwd     => $location,
         user    => $user,
