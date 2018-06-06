@@ -86,7 +86,8 @@ define wp::plugin (
       location => $location,
       user     => $user,
       onlyif   => [
-        '/usr/bin/wp core is-installed',
+        '/usr/bin/wp core is-installed',,
+        "/usr/bin/wp plugin is-installed ${slug}",
         "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == \$?'",
       ],
       tag      => 'plugin-disabled',
@@ -99,6 +100,7 @@ define wp::plugin (
         user    => $user,
         onlyif  => [
           '/usr/bin/wp core is-installed',
+          "/usr/bin/wp plugin is-installed ${slug}",
           "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp plugin status ${slug} --url=\$line | grep -q \"Status: Inactive\"; if [ \$? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url)\"; echo \$ret; /bin/test \$ret -gt 0'",
         ],
         tag     => 'plugin-disabled',
@@ -140,6 +142,7 @@ define wp::plugin (
         user     => $user,
         onlyif   => [
           '/usr/bin/wp core is-installed',
+          "/usr/bin/wp plugin is-installed ${slug}",
           "/usr/bin/wp plugin is-installed ${slug}",
         ],
         tag      => 'plugin-uninstalled',
