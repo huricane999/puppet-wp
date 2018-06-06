@@ -13,13 +13,8 @@ define wp::plugin (
   include wp::cli
 
   if $networkwide {
-    if $networkuser {
-      $network_arg = "--user=${networkuser} --network"
-      $activate_arg = "--user=${networkuser} --activate-network"
-    } else {
-      $network_arg = ' --network'
-      $activate_arg = '--activate-network'
-    }
+    $network_arg = ' --network'
+    $activate_arg = '--activate-network'
     $status_str = 'Network Active'
   } else {
     $network_arg = ''
