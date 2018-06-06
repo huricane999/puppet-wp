@@ -89,7 +89,7 @@ define wp::theme (
           tag     => 'theme-uninstalled',
         }
         ->exec { "${location} network deactivate theme ${theme_name}":
-          command => "/bin/bash -c \"while read line; do /usr/bin/wp theme activate `/usr/bin/wp theme list --url=\$line | /bin/grep -v ${theme_name} | /bin/grep -e \"network\\|site\" | head -n 1 | /bin/awk '{print \$1}'` --url=\$line; done <<< \"$( /usr/bin/wp site list --field=url )\"\"",
+          command => "/bin/bash -c \"new_theme=`/usr/bin/wp theme list --url=\$line | /bin/grep -v ${theme_name} | /bin/grep -e \"network\" | head -n 1 | /bin/awk '{print \$1}'`; while read line; do /usr/bin/wp theme activate \$new_theme --url=\$line; done <<< \"$( /usr/bin/wp site list --field=url )\"\"",
           cwd     => $location,
           user    => $user,
           onlyif  => [
