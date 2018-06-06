@@ -85,6 +85,32 @@ define wp::plugin (
     }
   }
 
+  if $ensure == 'disabled' or $ensure == 'deleted' or $ensure == 'uninstalled' {
+    wp::command { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
+      command  => "plugin deactivate ${network_arg} ${slug}",
+      location => $location,
+      user     => $user,
+      onlyif   => [
+        '/usr/bin/wp core is-installed',
+        "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == \$?'",
+      ],
+      tag      => 'plugin-disabled',
+    }
+
+    if $networkwide {
+      exec { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
+        command => "/bin/bash -c 'while read line; do /usr/bin/wp plugin deactivate ${slug} --url=\$line; done <<< \"$(/usr/bin/wp site list --field=url)\"'",
+        cwd     => $location,
+        user    => $user,
+        onlyif  => [
+          '/usr/bin/wp core is-installed',
+          "/bin/bash -c 'ret=0; while read line; do /usr/bin/wp plugin status ${slug} --url=\$line | grep -q \"Status: Inactive\"; if [ \$? -eq 0 ]; then let \"ret++\"; fi; done <<< \"$(/usr/bin/wp site list --field=url)\"; echo \$ret; /bin/test \$ret -gt 0'",
+        ],
+        tag     => 'plugin-disabled',
+      }
+    }
+  }
+
   case $ensure {
     enabled: {
       wp::command { "${location} enable plugin \"${source}\" ${network_arg} ${held_arg}":
@@ -93,23 +119,12 @@ define wp::plugin (
         user     => $user,
         onlyif   => [
           '/usr/bin/wp core is-installed',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == $?'",
+          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == \$?'",
         ],
         tag      => 'plugin-enabled',
       }
     }
-    disabled: {
-      wp::command { "${location} deactivate plugin ${slug} ${network_arg} ${held_arg}":
-        command  => "plugin deactivate ${network_arg} ${slug}",
-        location => $location,
-        user     => $user,
-        onlyif   => [
-          '/usr/bin/wp core is-installed',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: Inactive\" >& /dev/null; /bin/test 1 == $?'",
-        ],
-        tag      => 'plugin-disabled',
-      }
-    }
+    disabled: {}
     installed: {}
     deleted: {
       wp::command { "${location} delete plugin ${slug}":
