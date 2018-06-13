@@ -114,10 +114,8 @@ define wp::plugin (
         command  => "plugin activate ${slug} ${network_arg}",
         location => $location,
         user     => $user,
-        onlyif   => [
-          '/usr/bin/wp core is-installed',
-          "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\" >& /dev/null; /bin/test 1 == \$?'",
-        ],
+        onlyif   => '/usr/bin/wp core is-installed',
+        unless   => "/bin/bash -c '/usr/bin/wp plugin status ${slug} | grep -q \"Status: ${status_str}\"'",
         tag      => 'plugin-enabled',
       }
     }
